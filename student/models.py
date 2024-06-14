@@ -1,0 +1,16 @@
+from django.db import models
+from authorization.models import CustomUser
+from courses.models import Course
+from attendease.choices import SHIFT_CHOICES
+# Create your models here.
+
+class Student(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    
+    college_roll = models.TextField(max_length=10, unique=True)
+    dob = models.DateField()
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    shift = models.CharField(max_length=3, choices=SHIFT_CHOICES)
+    semester = models.IntegerField()
+    contact = models.CharField(max_length=10)
+    
