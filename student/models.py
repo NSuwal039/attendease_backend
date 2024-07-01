@@ -1,6 +1,6 @@
 from django.db import models
 from authorization.models import CustomUser
-from courses.models import Course
+from courses.models import *
 from attendease.choices import SHIFT_CHOICES
 # Create your models here.
 
@@ -13,4 +13,11 @@ class Student(models.Model):
     shift = models.CharField(max_length=3, choices=SHIFT_CHOICES)
     semester = models.IntegerField()
     contact = models.CharField(max_length=10)
+    
+class StudentSubjectConfig(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    semester = models.IntegerField(choices=SEMESTER_CHOICES)
+    
+    
     

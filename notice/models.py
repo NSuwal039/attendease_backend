@@ -7,7 +7,7 @@ from attendease.choices import CATEGORY_CHOICES
 class Notice(models.Model):
     created_on = models.DateField(auto_now=True)
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     category = models.CharField(max_length=3, choices=CATEGORY_CHOICES)
-    image = models.ImageField(upload_to='notice_images')
+    image = models.ImageField(upload_to='notice_images', null=True, blank=True)
     created_by = models.ForeignKey(Teacher, on_delete=models.CASCADE)

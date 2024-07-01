@@ -28,7 +28,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '192.168.101.6',
-    '192.168.101.14'
+    '192.168.101.14',
+    '192.168.101.10',
+    '172.16.12.222',
+    '192.168.243.128',
+    '192.168.181.128'
+    
 ]
 
 
@@ -124,7 +129,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kathmandu'
+
 
 USE_I18N = True
 

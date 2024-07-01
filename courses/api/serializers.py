@@ -16,12 +16,35 @@ class SubjectSerializer(serializers.ModelSerializer):
         model = Subject
         fields = '__all__'
 
-class SubjectCourseSerializer(serializers.ModelSerializer):
+class TeacherSubjectConfigSerializer(serializers.ModelSerializer):
+    course_info = serializers.SerializerMethodField()
+    subject_info = serializers.SerializerMethodField()
+    
+    def get_course_info(self, obj):
+        return CourseSerializer(obj.course).data
+    
+    def get_subject_info(self, obj):
+        return SubjectSerializer(obj.subject).data
+    
     class Meta:
-        model = SubjectCourse
+        model = TeacherSubjectConfig
+        fields = '__all__'
+
+class PeriodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Period
         fields = '__all__'
 
 class ClassSerializer(serializers.ModelSerializer):
+    period_info = serializers.SerializerMethodField()
+    subject_info = serializers.SerializerMethodField()
+    
+    def get_period_info(self, obj):
+        return PeriodSerializer(obj.period).data
+
+    def get_subject_info(self, obj):
+        return TeacherSubjectConfigSerializer(obj.subject).data
+    
     class Meta:
         model = Class
         fields = '__all__'

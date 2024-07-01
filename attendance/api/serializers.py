@@ -10,3 +10,8 @@ class LeaveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Leave
         fields = '__all__'
+
+class CustomStudentAttendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomStudentAttendance
+        fields = '__all__'

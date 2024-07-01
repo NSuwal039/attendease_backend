@@ -34,9 +34,9 @@ GROUP_CHOICES = [
     ]
 
 ATTENDANCE_CHOICES = (
-        ('Present','Present'),
-        ('Absent(Informed)','Absent(Informed)'),
-        ('Absent(Not Informed)','Absent(Not Informed)'),
+        ('P','Present'),
+        ('A','Absent'),
+        ('L','Leave'),
     )
 
 CATEGORY_CHOICES = [

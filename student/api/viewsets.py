@@ -1,13 +1,17 @@
+from datetime import datetime
 from rest_framework import viewsets
-from .serializers import StudentSerializer
-from ..models import Student
+from .serializers import StudentSerializer, StudentSubjectConfigSerializer
+from ..models import Student, StudentSubjectConfig
 from courses.models import *
+from courses.api.serializers import *
 from authorization.api.serializers import CustomUserSerializer
 from rest_framework.response import Response
 from django.db import transaction
 from rest_framework.decorators import action
 import pandas as pd
 from rest_framework import status
+from attendance.models import StudentAttendance
+from django.contrib.auth.models import Group
 
 class StudentViewSet(viewsets.ModelViewSet):
     serializer_class = StudentSerializer
@@ -30,13 +34,18 @@ class StudentViewSet(viewsets.ModelViewSet):
         user_serializer = CustomUserSerializer(data=user_json)
         user_serializer.is_valid(raise_exception=True)
         user = user_serializer.save()
+        user.groups.add(
+            Group.objects.get(name='Teachers')
+        )
+        user.save()
         
         student_json = {
             'college_roll': request.data['college_roll'],
             'dob': request.data['dob'],
-            'course': Course.objects.get(name=request.data['course']).pk,
+            # 'course': Course.objects.get(name=request.data['course']).pk,
+            'course': request.data['course'],
             'shift': request.data['shift'],
-            'semester':1,
+            'semester':request.data['semester'],
             'contact': request.data['contact'],
             'user': user.pk
         }
@@ -49,7 +58,6 @@ class StudentViewSet(viewsets.ModelViewSet):
             student_serializer.data,
             status=status.HTTP_201_CREATED
         )
-        
     
     @action(detail=False, methods=['GET'], url_path='upload-csv')
     def upload_csv(self, request, *args, **kwargs):
@@ -108,4 +116,74 @@ class StudentViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED
         )        
         
+class StudentSubjectConfigViewSet(viewsets.ModelViewSet):
+    serializer_class = StudentSubjectConfigSerializer
+    
+    def get_queryset(self):
+        return StudentSubjectConfig.objects.all()
+    
+    @action(detail=False, methods=['GET'], url_path='get-student-list')
+    def get_student_list(self, request, *args, **kwargs):
+        self_obj = Class.objects.get(id=request.query_params['class_id'])
+        course = self_obj.subject.course
+        subject = self_obj.subject.subject
+        semester = self_obj.subject.semester
         
+        print(course.name, subject.name, semester)
+        
+        students = StudentSubjectConfig.objects.filter(
+            subject = subject,
+            student__semester = semester,
+            student__course = course 
+        ).values_list('student__user')
+        print(students)
+        users = [CustomUser.objects.get(id=item[0]) for item in students]
+        
+        student_list = []
+        today = datetime.today().date()
+        for item in users:
+            attendance = None
+            try:
+                attendance = StudentAttendance.objects.get(
+                    student = item.student,
+                    attendance_date = today,
+                    subject_class = self_obj
+                )
+            except:
+                pass
+            
+            dict = {
+                'id': item.student.id,
+                'name': f'{item.first_name} {item.last_name}',
+                'college_roll': item.student.college_roll,
+                'status':attendance.status if attendance!=None else 'A'
+            }
+                
+            student_list.append(dict)
+                
+            
+        return Response(
+            student_list
+        )
+    
+    @action(detail=False, methods=['GET'], url_path='get-custom-student-list')
+    def get_custom_student_list(self, request, *args, **kwargs):
+        course = Course.objects.get(id=request.query_params['course_id'])
+        
+        students=Student.objects.filter(
+            course=course,
+            semester = int(request.query_params['semester'])
+        )
+        to_send = []
+        for item in students:
+            dict={
+                'id':item.id,
+                'name': f'{item.user.first_name} {item.user.last_name}',
+                'college_roll': item.college_roll,
+                'status': 'A'
+            }
+            to_send.append(dict)
+        return Response(
+            to_send,
+            status=status.HTTP_200_OK
+        )

@@ -13,7 +13,6 @@ class Course(models.Model):
 
 class Subject(models.Model):
     name = models.CharField(max_length=255)
-    course = models.ManyToManyField(Course, through='SubjectCourse')
     subject_code = models.CharField(max_length=5)
 
 class Teacher(models.Model):
@@ -24,11 +23,13 @@ class Teacher(models.Model):
     address = models.CharField(max_length=255)
     contact = models.CharField(max_length=10)
 
-class SubjectCourse(models.Model):
+class TeacherSubjectConfig(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     semester = models.IntegerField(choices=SEMESTER_CHOICES)
+    shift = models.CharField(max_length=3, choices=SHIFT_CHOICES)
+    
     
 class Period(models.Model):
     shift = models.CharField(max_length=3, choices=SHIFT_CHOICES)
@@ -43,10 +44,10 @@ class Period(models.Model):
 class Class(models.Model):
     day = models.CharField(max_length=3, choices=DAYS_CHOICES)
     period = models.ForeignKey(Period, on_delete=models.CASCADE)
-    subject = models.ForeignKey(SubjectCourse, on_delete=models.CASCADE)
+    subject = models.ForeignKey(TeacherSubjectConfig, on_delete=models.CASCADE)
     classroom = models.CharField(max_length=255, blank=True, null=True)
-    type = models.CharField(max_length=3, choices=TYPE_CHOICES)
-    group = models.CharField(max_length=1, choices=GROUP_CHOICES)
+    type = models.CharField(max_length=3, choices=TYPE_CHOICES, default='Lec')
+    group = models.CharField(max_length=1, choices=GROUP_CHOICES, default='-')
     
 # class Assignment(models.Model):
 #     created_on = models.DateField(auto_now_add=True)
