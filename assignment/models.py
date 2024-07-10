@@ -11,7 +11,7 @@ class Assignment(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     assigned_class = models.ForeignKey(TeacherSubjectConfig, on_delete=models.CASCADE)
-    student = models.ManyToManyField(Student, through='Submission')
+    submissions = models.ManyToManyField(Student, through='Submission')
 
 class Submission(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
