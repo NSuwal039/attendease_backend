@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 
-from courses.api.serializers import ClassSerializer
+from courses.api.serializers import ClassSerializer, SubjectSerializer, TeacherSubjectConfigSerializer
 from .serializers import TeacherSerializer
 from ..models import *
 from authorization.api.serializers import CustomUserSerializer
@@ -83,5 +83,13 @@ class TeacherViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
+    
+    @action(detail=True, methods=['GET'], url_path='get-teacher-current-classes')
+    def get_teacher_classes(self, request, *args, **kwargs):
+        subjects = TeacherSubjectConfig.objects.filter(teacher=self.get_object())
+        print(subjects)
         
-        
+        return Response(
+            TeacherSubjectConfigSerializer(subjects, many=True).data,
+            status=status.HTTP_200_OK
+        )
