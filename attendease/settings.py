@@ -33,7 +33,8 @@ ALLOWED_HOSTS = [
     '172.16.12.222',
     '192.168.243.128',
     '192.168.181.128',
-    '192.168.18.171'
+    '192.168.18.171',
+    '192.168.1.65'
     
 ]
 
@@ -41,6 +42,8 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -86,7 +89,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'attendease.wsgi.application'
+# WSGI_APPLICATION = 'attendease.wsgi.application'
+ASGI_APPLICATION = "attendease.asgi.application"
 
 
 REST_FRAMEWORK = {
