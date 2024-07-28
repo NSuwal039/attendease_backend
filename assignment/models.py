@@ -17,6 +17,6 @@ class Submission(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     file = models.FileField(upload_to='student_assignments')
-    grade = models.FloatField()
-    feedback = models.TextField()
+    grade = models.FloatField(null=True, blank=True)
+    feedback = models.TextField(null=True, blank=True)
     date_submitted = models.DateTimeField(auto_now_add=True)

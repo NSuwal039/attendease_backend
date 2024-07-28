@@ -28,7 +28,12 @@ class TeacherSubjectConfig(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     semester = models.IntegerField(choices=SEMESTER_CHOICES)
+    photo = models.ImageField(upload_to='teacher_images', null=True, blank=True)
+    
     shift = models.CharField(max_length=3, choices=SHIFT_CHOICES)
+    
+    def __str__(self):
+        return f'{self.course.name}-{self.semester}-{self.shift}-{self.subject.name}-{self.teacher.user}'
     
     
 class Period(models.Model):

@@ -6,6 +6,7 @@ from attendease.choices import SHIFT_CHOICES
 
 class Student(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    photo = models.ImageField(upload_to='student_images', null=True, blank=True)
     
     college_roll = models.TextField(max_length=10, unique=True)
     dob = models.DateField()
@@ -13,6 +14,7 @@ class Student(models.Model):
     shift = models.CharField(max_length=3, choices=SHIFT_CHOICES)
     semester = models.IntegerField()
     contact = models.CharField(max_length=10)
+    group = models.CharField(max_length=1, choices=GROUP_CHOICES)
     
 class StudentSubjectConfig(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

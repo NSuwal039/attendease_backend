@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from datetime import datetime
 from rest_framework import status
 import json
+from courses.views import get_token_user
 
 class StudentAttendanceViewset(viewsets.ModelViewSet):
     serializer_class = StudentAttendanceSerializer
@@ -110,6 +111,67 @@ class LeaveViewset(viewsets.ModelViewSet):
     
     def get_queryset(self):
         return Leave.objects.all()
+    
+    def create(self, request):
+        student = get_token_user(request).student
+        leave_objects = []
+        
+        for item in request.data['subjects']:
+            class_obj = Class.objects.get(id=item)
+            x,y = StudentAttendance.objects.get_or_create(
+                attendance_date=request.data['date'],
+                status = 'L',
+                student = student,
+                subject_class = class_obj,
+                attendance_by = class_obj.subject.teacher
+            )
+            
+            a,b = Leave.objects.get_or_create(
+                attendance = x,
+                reason = request.data['description']
+            )
+            leave_objects.append(a)
+        
+        return Response(
+            LeaveSerializer(leave_objects, many=True).data,
+            status=status.HTTP_200_OK
+        )
+        
+    @action(detail=False, methods=['GET'], url_path='get-teacher-leaves')
+    def get_teacher_leaves(self, request, *args, **kwargs):
+        teacher_id = request.query_params.get('id')
+        if not teacher_id:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        teacher = Teacher.objects.get(id=teacher_id)
+        leaves = Leave.objects.filter(
+            attendance__subject_class__subject__teacher=teacher
+        )
+        
+        return Response(
+            LeaveSerializer(leaves, many=True).data,
+            status=status.HTTP_200_OK
+        )
+    
+    @action(detail=False, methods=['GET'], url_path='get-student-leaves')
+    def get_student_leaves(self, request, *args, **kwargs):
+        teacher_id = request.query_params.get('id')
+        if not teacher_id:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        student = Student.objects.get(id=teacher_id)
+        leaves = Leave.objects.filter(
+            attendance__student=student
+        )
+        
+        return Response(
+            LeaveSerializer(leaves, many=True).data,
+            status=status.HTTP_200_OK
+        )
 
 class CustomStudentAttendanceViewSet(viewsets.ModelViewSet):
     serializer_class = CustomStudentAttendanceSerializer

@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
-from authorization.api.viewsets import CustomUserViewset
+from authorization.api.viewsets import CustomUserViewset, PasswordResetRequestViewSet
 from assignment.api.viewsets import *
-from attendance.api.viewsets import StudentAttendanceViewset, CustomStudentAttendanceViewSet
+from attendance.api.viewsets import StudentAttendanceViewset, CustomStudentAttendanceViewSet,LeaveViewset
 from courses.api.viewsets import *
 from student.api.viewsets import StudentViewSet,StudentSubjectConfigViewSet
 from teacher.api.viewsets import TeacherViewSet
@@ -13,7 +13,7 @@ router.register('assignments', AssignmentViewset, 'assignments')
 router.register('submissions', SubmissionViewset, 'submissions')
 router.register('student-attendance', StudentAttendanceViewset, 'student-attendance')
 router.register('custom-student-attendance', CustomStudentAttendanceViewSet, 'custom-student-attendance')
-# router.register('faculties', FacultyViewset, 'faculties')
+router.register('faculties', FacultyViewset, 'faculties')
 router.register('classes', ClassViewset, 'classes')
 router.register('students', StudentViewSet, 'students')
 router.register('teachers', TeacherViewSet, 'teachers')
@@ -22,3 +22,5 @@ router.register('subjects', SubjectViewset, 'subjects')
 router.register('teacher-subject', TeacherSubjectConfigViewset, 'teacher-subject')
 router.register('selected-subjects', StudentSubjectConfigViewSet, 'selected-subjects')
 router.register('notices', NoticeViewSet, 'notices')
+router.register('leaves', LeaveViewset, 'leaves')
+router.register('forgot-password', PasswordResetRequestViewSet, 'forgor')

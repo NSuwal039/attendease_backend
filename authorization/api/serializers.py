@@ -2,13 +2,18 @@ from rest_framework import serializers
 
 from student.api.serializers import StudentSerializer
 from teacher.api.serializers import TeacherSerializer
-from ..models import CustomUser
+from ..models import CustomUser, PasswordResetRequest
 from django.contrib.auth.models import Group
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = ['id', 'name', 'permissions']
+    
+class PasswordResetRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PasswordResetRequest
+        fields = ['user', 'created']
 
 class CustomUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

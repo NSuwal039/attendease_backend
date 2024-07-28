@@ -34,7 +34,11 @@ ALLOWED_HOSTS = [
     '192.168.243.128',
     '192.168.181.128',
     '192.168.18.171',
-    '192.168.1.65'
+    '192.168.1.65',
+    '192.168.1.12',
+    '192.168.101.4',
+    '127.0.0.1',
+    '192.168.7.128'
     
 ]
 
@@ -43,6 +47,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'daphne',
+    'channels',
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -58,7 +63,8 @@ INSTALLED_APPS = [
     'attendance',
     'courses',
     'assignment',
-    'notice'
+    'notice',
+    'chat'
 ]
 
 MIDDLEWARE = [
@@ -91,6 +97,19 @@ TEMPLATES = [
 
 # WSGI_APPLICATION = 'attendease.wsgi.application'
 ASGI_APPLICATION = "attendease.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default':{
+        'BACKEND':'channels_redis.core.RedisChannelLayer',
+        'CONFIG':{
+            'hosts':[('127.0.0.1', 6379)],
+        },
+    },
+}
+
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
+
 
 
 REST_FRAMEWORK = {
@@ -167,3 +186,13 @@ AUTHENTICATION_BACKENDS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'test.ran.mail@gmail.com'
+EMAIL_HOST_PASSWORD = 'rlbo tpfu nzbb ixno '
+DEFAULT_FROM_EMAIL = 'test.ran.mail@gmail.com'

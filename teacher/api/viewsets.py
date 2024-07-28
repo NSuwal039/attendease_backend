@@ -87,9 +87,22 @@ class TeacherViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'], url_path='get-teacher-current-classes')
     def get_teacher_classes(self, request, *args, **kwargs):
         subjects = TeacherSubjectConfig.objects.filter(teacher=self.get_object())
-        print(subjects)
         
         return Response(
             TeacherSubjectConfigSerializer(subjects, many=True).data,
             status=status.HTTP_200_OK
         )
+    
+    @action(detail=True, methods=['GET'], url_path='get-routine')
+    def get_routine(self, requets, *args, **kwargs):
+        teacher = self.get_object()
+        
+        classes = Class.objects.filter(
+            subject__teacher = teacher
+        )
+        
+        return Response(
+            ClassSerializer(classes, many=True).data,
+            status=status.HTTP_200_OK
+        )
+        

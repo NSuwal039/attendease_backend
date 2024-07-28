@@ -20,12 +20,17 @@ from authorization.views import *
 from .routers import router
 from django.conf.urls.static import static
 from django.conf import settings
+from courses.api.viewsets import search
+from authorization.api.viewsets import get_csrf_token
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/login/', LoginAPIView.as_view()),
-    path('api/', include(router.urls))
+    path('api/', include(router.urls)),
+    path('api/search/', search),
+    path('api/get-csrf-token/', get_csrf_token),
+    
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

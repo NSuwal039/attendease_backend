@@ -59,6 +59,20 @@ class StudentViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED
         )
     
+    @action(detail=True, methods=['GET'], url_path='get-routine')
+    def get_student_subjects(self, request, *args, **kwargs):
+        student = self.get_object()
+        classes = Class.objects.filter(
+            subject__course = student.course,
+            subject__semester = student.semester,
+            subject__shift = student.shift,
+        )
+            
+        return Response(
+            ClassSerializer(classes, many=True).data,
+            status=status.HTTP_200_OK
+        )
+    
     @action(detail=False, methods=['GET'], url_path='upload-csv')
     def upload_csv(self, request, *args, **kwargs):
         file = request.FILES.get('student_info')

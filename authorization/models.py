@@ -1,8 +1,7 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.contrib.auth.hashers import make_password
-
-
+import random
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
         print('IN USERS')
@@ -56,3 +55,20 @@ class CustomUser(AbstractUser):
         return f'{self.first_name} {self.last_name}'
     class Meta:
         db_table = 'custom_user'
+
+class PasswordResetRequest(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    code = models.IntegerField(default=None, blank=True, null=True, unique=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.code:
+            self.code = self.generate_unique_code()
+        super().save(*args, **kwargs)
+
+    def generate_unique_code(self):
+        while True:
+            code = random.randint(1000, 9999)
+            if not PasswordResetRequest.objects.filter(code=code).exists():
+                return code
